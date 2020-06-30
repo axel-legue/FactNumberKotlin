@@ -13,13 +13,38 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.KoinComponent
 
 class MainActivity : AppCompatActivity(), KoinComponent {
+    companion object {
+        private var KEY_USER_INPUT: String = "user_input"
+        private var KEY_RESULT: String = "result"
+    }
 
     private val numberViewModel: FactNumberViewModel by viewModel()
-    private lateinit var inputText: String
+    private var inputText: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        if (savedInstanceState.containsKey(KEY_USER_INPUT)) {
+            inputText = savedInstanceState.getString(KEY_USER_INPUT) ?: ""
+            input_trivia.text = Editable.Factory.getInstance().newEditable(inputText)
+        }
+        if (savedInstanceState.containsKey(KEY_RESULT)) {
+            result_trivia.text = savedInstanceState.getString(KEY_RESULT) ?: ""
+        }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        if (inputText.isNotEmpty()) {
+            outState.putString(KEY_USER_INPUT, inputText)
+        }
+        if (result_trivia.text.isNotEmpty()) {
+            outState.putString(KEY_RESULT, result_trivia.text.toString())
+        }
     }
 
     override fun onStart() {
@@ -27,15 +52,13 @@ class MainActivity : AppCompatActivity(), KoinComponent {
 
         input_trivia.addTextChangedListener(object : TextWatcher {
 
-            override fun afterTextChanged(s: Editable) {
-                // Do Nothing
+            override fun afterTextChanged(s: Editable) { // Do Nothing
             }
 
             override fun beforeTextChanged(
                 s: CharSequence, start: Int,
                 count: Int, after: Int
-            ) {
-                // Do Nothing
+            ) { // Do Nothing
             }
 
             override fun onTextChanged(
@@ -54,11 +77,11 @@ class MainActivity : AppCompatActivity(), KoinComponent {
         }
 
         random_button.setOnClickListener {
+            input_trivia.text = null
+            input_trivia.clearFocus()
             numberViewModel.getRandomNumber().observe(this, Observer { factNumber ->
                 result_trivia.text = factNumber?.text
             })
         }
-
     }
-
 }
