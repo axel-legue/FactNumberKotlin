@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">FactsNumbers</string>
+    <string name="get_random_trivia">Random Trivia</string>
+    <string name="search">Search</string>
+    <string name="hint_number">Enter a Number</string>
+    <string name="title_screen">NumbersFact</string>
+</resources>
